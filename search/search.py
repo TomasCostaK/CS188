@@ -135,7 +135,9 @@ def depthFirstSearch(problem):
 # Same implementation as DFS, except that stack is a LIFO so we search horizontally
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
-    util.raiseNotDefined()
+    # CODE ADDITIONS
+    struct = util.Queue()
+    return generic_search(struct, problem)
 
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
