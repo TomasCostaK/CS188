@@ -62,6 +62,44 @@ class SearchProblem:
         """
         util.raiseNotDefined()
 
+# This generic search can vary in terms of the structure used - the fringe
+def generic_search(structure, problem):
+    visited = {}
+    solution = []
+    path = {}
+    goal = False
+
+    start = problem.getStartState()
+    # we need this annotation
+    structure.push((start,'',0))
+    visited[start] = ''
+
+    # if the current position is the goal, exit search fn
+    if problem.isGoalState(start):
+        return solution
+
+    while not (structure.isEmpty() or goal):
+        node = structure.pop()
+        visited[node[0]] = node[1]
+        print("Visiting ", node)
+        # We found the given goal, break while
+        if problem.isGoalState(node[0]):
+            goal = True
+            child = node[0]
+            break
+        
+        # Here we create the given path for each sucessor for the given state
+        for suc in problem.getSuccessors(node[0]):
+            if suc[0] not in visited.keys():
+                path[suc[0]] = node[0]
+                structure.push(suc)
+    
+    while(child in path.keys()):
+        parent = path[child]
+        solution.insert(0, visited[child])
+        child = parent
+    
+    return solution
 
 def tinyMazeSearch(problem):
     """
@@ -82,46 +120,21 @@ def depthFirstSearch(problem):
 
     To get started, you might want to try some of these simple commands to
     understand the search problem that is being passed in:
-
-    print "Start:", problem.getStartState()
-    print "Is the start a goal?", problem.isGoalState(problem.getStartState())
-    print "Start's successors:", problem.getSuccessors(problem.getStartState())
     """
-    visited = {}
-    solution = []
-    stack = util.Stack()
-    route = {}
+    print("Start:", problem.getStartState())
+    # print("Is the start a goal?", problem.isGoalState(problem.getStartState()))
+    print("Start's successors:", problem.getSuccessors(problem.getStartState()))
+    print()
+    
+    # CODE ADDITIONS
+    struct = util.Stack()
+    return generic_search(struct, problem)
 
-    start = problem.getStartState()
-    stack.push((start, '', 0))
-    visited[start] = ''
-    if problem.isGoalState(start):
-        return solution
-
-    goal = False
-    while not (stack.isEmpty() or goal):
-        vertex = stack.pop()
-        visited[vertex[0]] = vertex[1]
-        if problem.isGoalState(vertex[0]):
-            child = vertex[0]
-            goal = True
-            break
-        for i in problem.getSuccessors(vertex[0]):
-            if i[0] not in visited.keys():
-                route[i[0]] = vertex[0]
-                stack.push(i)
-
-    while(child in route.keys()):
-        parent = route[child]
-        solution.insert(0, visited[child])
-        child = parent
-
-    return solution
     util.raiseNotDefined()
 
+# Same implementation as DFS, except that stack is a LIFO so we search horizontally
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
-    "*** YOUR CODE HERE ***"
     util.raiseNotDefined()
 
 def uniformCostSearch(problem):
