@@ -70,11 +70,11 @@ def generic_search(structure, problem):
     goal = False
 
     start = problem.getStartState()
-    # we need this annotation
+    # We need this annotation
     structure.push((start,'',0))
     visited[start] = ''
 
-    # if the current position is the goal, exit search fn
+    # If the current position is the goal, exit search fn
     if problem.isGoalState(start):
         return solution
 
@@ -99,6 +99,7 @@ def generic_search(structure, problem):
         solution.insert(0, visited[child])
         child = parent
     
+    print("SOLUTION: "+str(len(solution))+"\n");
     return solution
 
 def tinyMazeSearch(problem):
@@ -113,20 +114,14 @@ def tinyMazeSearch(problem):
 
 def depthFirstSearch(problem):
     """
-    Search the deepest nodes in the search tree first.
-
-    Your search algorithm needs to return a list of actions that reaches the
-    goal. Make sure to implement a graph search algorithm.
-
-    To get started, you might want to try some of these simple commands to
-    understand the search problem that is being passed in:
+    Depth-First Search that returns a list of actions that reaches 
+    goal. 
     """
     print("Start:", problem.getStartState())
     # print("Is the start a goal?", problem.isGoalState(problem.getStartState()))
     print("Start's successors:", problem.getSuccessors(problem.getStartState()))
     print()
-    
-    # CODE ADDITIONS
+
     struct = util.Stack()
     return generic_search(struct, problem)
 
@@ -134,15 +129,43 @@ def depthFirstSearch(problem):
 
 # Same implementation as DFS, except that stack is a LIFO so we search horizontally
 def breadthFirstSearch(problem):
-    """Search the shallowest nodes in the search tree first."""
-    # CODE ADDITIONS
+    """
+    Breadth-First Search that returns a list of actions that reaches the goal
+    goal. 
+    """
     struct = util.Queue()
     return generic_search(struct, problem)
 
 def uniformCostSearch(problem):
-    """Search the node of least total cost first."""
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    """
+    Uniform-Cost Search that returns a list of actions that reaches the
+    goal. 
+    """
+    visited = {}
+    structure = util.PriorityQueue();
+    start = problem.getStartState()
+    structure.push((start,[]) ,0)
+    visited[start] = []
+
+    # If the current position is the goal, exit 
+    if problem.isGoalState(start):
+        return []
+
+    while not (structure.isEmpty()):
+        node = structure.pop()
+        visited[node[0]] = node[1]
+
+        # We found the given goal, break while
+        if problem.isGoalState(node[0]):
+            break
+        
+        for suc in problem.getSuccessors(node[0]):
+            if suc[0] not in visited.keys():
+                pathCost = node[1] + [suc[1]]
+                structure.push((suc[0], pathCost), problem.getCostOfActions(pathCost))   # defined cost of path
+    
+    solution = node[1] # actions to goal
+    return solution
 
 def nullHeuristic(state, problem=None):
     """
