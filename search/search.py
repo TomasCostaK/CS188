@@ -127,7 +127,7 @@ def depthFirstSearch(problem):
 
     util.raiseNotDefined()
 
-# Same implementation as DFS, except that stack is a LIFO so we search horizontally
+# Same implementation as DFS, except that we search horizontally
 def breadthFirstSearch(problem):
     """
     Breadth-First Search that returns a list of actions that reaches the goal
