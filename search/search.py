@@ -71,34 +71,30 @@ def generic_search(structure, problem):
 
     start = problem.getStartState()
     # We need this annotation
-    structure.push((start,'',0))
-    visited[start] = ''
+    structure.push((start,[]))
 
     # If the current position is the goal, exit search fn
     if problem.isGoalState(start):
         return solution
 
-    while not (structure.isEmpty() or goal):
+    while not (structure.isEmpty()):
         node = structure.pop()
-        visited[node[0]] = node[1]
-        print("Visiting ", node)
+        
+        ##print("Visiting ", node)
         # We found the given goal, break while
         if problem.isGoalState(node[0]):
-            goal = True
-            child = node[0]
-            break
+            return node[1]
         
         # Here we create the given path for each sucessor for the given state
-        for suc in problem.getSuccessors(node[0]):
-            if suc[0] not in visited.keys():
-                path[suc[0]] = node[0]
-                structure.push(suc)
+        if node[0] not in visited.keys():
+            for suc in problem.getSuccessors(node[0]):
+                if suc[0] not in visited.keys():
+                    path[suc[0]] = node[0]
+                    structure.push((suc[0], node[1]+[suc[1]]))
+        
+        visited[node[0]] = node[1]
     
-    while(child in path.keys()):
-        parent = path[child]
-        solution.insert(0, visited[child])
-        child = parent
-    
+    solution = node[1]
     print("SOLUTION: "+str(len(solution))+"\n");
     return solution
 
@@ -125,8 +121,6 @@ def depthFirstSearch(problem):
     struct = util.Stack()
     return generic_search(struct, problem)
 
-    util.raiseNotDefined()
-
 # Same implementation as DFS, except that we search horizontally
 def breadthFirstSearch(problem):
     """
@@ -135,6 +129,7 @@ def breadthFirstSearch(problem):
     """
     struct = util.Queue()
     return generic_search(struct, problem)
+    
 
 def uniformCostSearch(problem):
     """
@@ -145,27 +140,25 @@ def uniformCostSearch(problem):
     structure = util.PriorityQueue();
     start = problem.getStartState()
     structure.push((start,[]) ,0)
-    visited[start] = []
-
-    # If the current position is the goal, exit 
-    if problem.isGoalState(start):
-        return []
 
     while not (structure.isEmpty()):
         node = structure.pop()
-        visited[node[0]] = node[1]
-
+        
         # We found the given goal, break while
         if problem.isGoalState(node[0]):
             break
         
-        for suc in problem.getSuccessors(node[0]):
-            if suc[0] not in visited.keys():
-                pathCost = node[1] + [suc[1]]
-                structure.push((suc[0], pathCost), problem.getCostOfActions(pathCost))   # defined cost of path
+        if node[0] not in visited.keys():
+            for suc in problem.getSuccessors(node[0]):
+                if suc[0] not in visited.keys():
+                    pathCost = node[1] + [suc[1]]
+                    structure.push((suc[0], pathCost), problem.getCostOfActions(pathCost))   # defined cost of path
+
+        visited[node[0]] = node[1]
     
     solution = node[1] # actions to goal
     return solution
+
 
 def nullHeuristic(state, problem=None):
     """
@@ -180,7 +173,6 @@ def aStarSearch(problem, heuristic=nullHeuristic):
     structure = util.PriorityQueue();
     start = problem.getStartState()
     structure.push((start,[]), nullHeuristic(start, problem))
-    visited[start] = []
     pathCost = 0
 
     # If the current position is the goal, exit 
@@ -189,18 +181,18 @@ def aStarSearch(problem, heuristic=nullHeuristic):
 
     while not (structure.isEmpty()):
         node = structure.pop()
-        visited[node[0]] = node[1]
-
         # We found the given goal, break while
         if problem.isGoalState(node[0]):
             break
         
-        for suc in problem.getSuccessors(node[0]):
-            if suc[0] not in visited.keys():
-                path = node[1] + [suc[1]]
-                pathCost = problem.getCostOfActions(path) + heuristic(suc[0], problem)
-                structure.push((suc[0], path), pathCost)   # defined cost of path
-    
+        if node[0] not in visited.keys():
+            for suc in problem.getSuccessors(node[0]):
+                if suc[0] not in visited.keys():
+                    path = node[1] + [suc[1]]
+                    pathCost = problem.getCostOfActions(path) + heuristic(suc[0], problem)
+                    structure.push((suc[0], path), pathCost)   # defined cost of path
+        visited[node[0]] = node[1]
+
     solution = node[1] # actions to goal
     return solution
 
